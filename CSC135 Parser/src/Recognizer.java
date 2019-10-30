@@ -97,8 +97,10 @@ public class Recognizer
 	{
 		 if ((getToken() == '0') || (getToken() == '1') || (getToken() == '2') || (getToken() == '3'))
 			 digit();
-		 else 
+		 else if((getToken() == 'Y') || (getToken() == 'Z'))
 			 letter(); 
+		 else
+			 error();
 	}
 	
 	private void digit()
@@ -265,18 +267,13 @@ public class Recognizer
 	
 	private void whileStatemt()
 	{
-		if (getToken() == 'W') 
-		{
-			match('W');
-			cond();
-			match('T');
-			match('B');
-			while(getToken() == 'F' || getToken() == 'Y' || getToken() == 'Z' || getToken() == 'W' || getToken() == 'J' || getToken() == 'K')
-				statemt();
-			match('E');
-		}
-		else
-			error();
+		match('W');
+		cond();
+		match('T');
+		match('B');
+		while(getToken() == 'F' || getToken() == 'Y' || getToken() == 'Z' || getToken() == 'W' || getToken() == 'J' || getToken() == 'K')
+			statemt();
+		match('E');
 	}
 	
 	private void cond()
