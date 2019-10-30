@@ -168,8 +168,6 @@ public class Recognizer
 		}
 		else if(getToken() == 'W')
 			whileStatemt();
-		else if(getToken() == 'J' || getToken() == 'K')
-			methodCall();
 		else
 			error();
 	}
