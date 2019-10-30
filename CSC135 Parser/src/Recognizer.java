@@ -21,20 +21,19 @@ public class Recognizer
 		return recognizer;
 	}
 	
-	public void parse(String input)
-	{
-		javaClass();
-	}
-	
 	public void javaClass()
 	{
 		className();
-		if()//token == X
+		if(getToken() == 'X')
 		{
 			className();
 		}
-		//B
+		match('B');
 		varList();
+		match(';');
+		while(getToken() == 'P' || getToken() == 'V')
+			method();
+		match('E');
 	}
 	
 	public void className()
@@ -48,12 +47,24 @@ public class Recognizer
 	public void varList()
 	{
 		varDef();
+		while(getToken() == ',')
+			varDef();
 	}
 	
 	public void varDef()
 	{
-		type();
-		varName();
+		if(getToken() == 'I' || getToken() == 'S')
+		{
+			type();
+			varName();
+		}
+		else if(getToken() == 'C' || getToken() == 'D')
+		{
+			className();
+			varRef();
+		}
+		else
+			error();
 	}
 	
 	public void type()
@@ -66,7 +77,11 @@ public class Recognizer
 	
 	public void varName()
 	{
-		
+		letter();
+		while(getToken() == 'Y' || getToken() == 'Z' || getToken() == '0' || getToken() == '1' || getToken() == '2' || getToken() == '3')
+		{
+			character();
+		}
 	}
 	
 	public void letter()
@@ -94,7 +109,9 @@ public class Recognizer
 	
 	public void integer()
 	{
-		
+		digit();
+		while(getToken() == '0' || getToken() == '1' || getToken() == '2' || getToken() == '3')
+			digit();
 	}
 	
 	public void varRef()
@@ -107,7 +124,18 @@ public class Recognizer
 	
 	public void method()
 	{
-		
+		accessor();
+		type();
+		methodName();
+		match('(');
+		if(getToken() == 'I' || getToken() == 'S')
+			varList();
+		match(')');
+		match('B');
+		while(getToken() == 'F' || getToken() == 'Y' || getToken() == 'Z' || getToken() == 'W' || getToken() == 'J' || getToken() == 'K');
+			statemt();
+		returnStatemt();
+		match('E');
 	}
 	
 	public void accessor()
@@ -128,62 +156,149 @@ public class Recognizer
 	
 	public void statemt()
 	{
-		
+		if(getToken() == 'F')
+			ifStatemt();
+		else if(getToken() == 'Y' || getToken() == 'Z')
+		{
+			assignStatemt();
+			match(';');
+		}
+		else if(getToken() == 'W')
+			whileStatemt();
+		else if(getToken() == 'J' || getToken() == 'K')
+			methodCall();
+		else
+			error();
 	}
 	
 	public void ifStatemt()
 	{
-		
+		match('F');
+		cond();
+		match('T');
+		match('B');
+		while(getToken() == 'F' || getToken() == 'Y' || getToken() == 'Z' || getToken() == 'W' || getToken() == 'J' || getToken() == 'K')
+			statemt();
+		match('E');
+		if(getToken() == 'L')
+		{
+			match('L');
+			match('B');
+			while(getToken() == 'F' || getToken() == 'Y' || getToken() == 'Z' || getToken() == 'W' || getToken() == 'J' || getToken() == 'K')
+				statemt();
+			match('E');
+		}
 	}
 	
 	public void assignStatemt()
 	{
-		
+		if(getToken() == 'Y' || getToken() == 'Z')
+		{
+			varName();
+			match('=');
+			mathExpr();
+		}
+		else if(getToken() == 'J' || getToken() == 'K')
+		{
+			varRef();
+			match('=');
+			getVarRef();
+		}
+		else
+			error();
 	}
 	
 	public void mathExpr()
 	{
-		
+		factor();
+		while(getToken() == '+')
+			factor();
 	}
 	
 	public void factor()
 	{
-		
+		oprnd();
+		while(getToken() == '*')
+			oprnd();
 	}
 	
 	public void oprnd()
 	{
-		
+		if(getToken() == '0' || getToken() == '1' || getToken() == '2' || getToken() == '3')
+			integer();
+		else if(getToken() == 'Y' || getToken() == 'Z')
+			varName();
+		else if(getToken() == '(')
+		{
+			match('(');
+			mathExpr();
+			match(')');
+		}
+		else if(getToken() == 'J' || getToken() == 'K')
+			methodCall();
+		else
+			error();
 	}
 	
 	public void getVarRef()
 	{
-		
+		if(getToken() == 'O')
+		{
+			match('O');
+			className();
+			match('(');
+			match(')');
+		}
+		else if(getToken() == 'J' || getToken() == 'K')
+			methodCall();
+		else
+			error();
 	}
 	
 	public void whileStatemt()
 	{
-		
+		match('W');
+		cond();
+		match('T');
+		match('B');
+		while(getToken() == 'F' || getToken() == 'Y' || getToken() == 'Z' || getToken() == 'W' || getToken() == 'J' || getToken() == 'K')
+			statemt();
+		match('E');
 	}
 	
 	public void cond()
 	{
-		
+		while(getToken() == '0' || getToken() == '1' || getToken() == '2' || getToken() == '3' || getToken() == 'Y' || getToken() == 'Z' || getToken() == '(' || getToken() == 'J' || getToken() == 'K')
+		{
+			oprnd();
+			operator();
+			oprnd();
+		}
 	}
 	
 	public void operator()
 	{
-		
+		if ((getToken() == '<') || (getToken() == '=') || (getToken() == '>' || (getToken() == '!')))  
+			match(getToken());
+		else error();
 	}
 	
 	public void returnStatemt()
 	{
-		
+		match('R');
+		varName();
+		match(';');
 	}
 	
 	public void methodCall()
 	{
-		
+		varRef();
+		match('.');
+		methodName();
+		match('(');
+		if(getToken() == 'I' || getToken() == 'S')
+			varList();
+		match(')');
 	}
 	
 	public void match(char T)
@@ -208,11 +323,6 @@ public class Recognizer
 	    System.out.println("Unexpected token \"" + getToken() + "\" at position " + index);
 	    errorFlag = 1;
 	    nextToken();
-	}
-	
-	public void printError()
-	{
-		System.out.println("Unexpected token \"" + getToken() + "\" at position " + index);
 	}
 	
 	private void start()
