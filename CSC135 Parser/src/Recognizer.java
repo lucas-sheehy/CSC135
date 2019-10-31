@@ -1,3 +1,54 @@
+/*Team TGIF 
+ * Lucas Sheehy, Matthew Calderon
+ * 
+ * To use:
+ * Run the program and enter a string with no whitespace ending in '$'
+ * 
+ * 
+ * Test Cases:
+<javaclass>, <classname>, <varlist>, <vardef>, <type>, <varname>, <letter>
+CBIY;E$
+
+<javaclass>, <classname>, <varlist>, <vardef>, <classname>, <classname>, <varref>
+CBCJ;E$
+
+Goes into method
+<javaclass>, <classname>, <classname>, <varlist>, <vardef>, <vardef>, <method>, <accessor>, <type>, <methodname>, <returnstatement>,
+ <varname>, <letter>
+CXCBIY,CJ;PIM()BRY;EE$
+
+Goes into varlist
+<javaclass>, <classname>, <classname>, <varlist>, <vardef>, <type>, <varname>, <letter>, <vardef>, <classname>, <varref>, <method>,
+ <accessor>, <type>, <methodname>, <varlist>, <vardef>, <type>, <varname>, <letter>, <char>, <letter>, <char>, <digit>,
+  <returnstatement>, <varname>, <letter>
+CXCBIY,CJ;PIM(SZY0)BRY;EE$
+
+Goes into statemnt > ifstatemt > etc
+<javaclass>, <classname>, <classname>, <varlist>, <vardef>, <type>, <varname>, <letter>, <vardef>, <classname>, <varref>, <method>, 
+<accessor>, <type>, <methodname>, <varlist>, <vardef>, <type>, <varname>, <letter>, <char>, <letter>, <char>, <digit>, <statement>, 
+<ifstatemnt>, <cond>, <oprnd>, <integer>, <digit>,  <operator>, <oprnd>, <integer>, <digit>, <returnstatement>, <varname>, <letter>
+CXCBIY,CJ;PIM(SZY0)BF(0=0)TBERY;EE$
+
+Goes into statemnt > assignstatemt first side > etc
+<javaclass>, <classname>, <classname>, <varlist>, <vardef>, <type>, <varname>, <letter>, <vardef>, <classname>, <varref>, <method>,
+ <accessor>, <type>, <methodname>, <varlist>, <vardef>, <type>, <varname>, <letter>, <char>, <letter>, <char>, <digit>, <statement>,
+  <assignstatemnt>, <varref>, <getvarref>, <classname>, <returnstatement>, <varname>
+CXCBIY,CJ;PIM(SZY0)BK=OC();RY;EE$
+
+Goes into statemnt > assignstatemt second side > etc
+<javaclass>, <classname>, <classname>, <varlist>, <vardef>, <type>, <varname>, <letter>, <vardef>, <classname>, <varref>, <method>,
+ <accessor>, <type>, <methodname>, <varlist>, <vardef>, <type>, <varname>, <letter>, <char>, <letter>, <char>, <digit>, <statement>,
+  <assignstatemnt>, <varname>, <letter>, <mathexpr>, <factor>, <oprnd>, <integer>, <digit>, <factor>, <oprnd>, <varname>, <letter>,
+   <oprnd>, <methodcall>, <varref>, <methodname>, <varlist>, <vardef>, <type>, <varname>, <letter>, <returnstatement>, <varname>
+CXCBIY,CJ;PIM(SZY0)BY=0+Z*J.N(SZ);RY;EE$
+
+Goes into statemnt > whilestatemt > etc
+<javaclass>, <classname>, <classname>, <varlist>, <vardef>, <type>, <varname>, <letter>, <vardef>, <classname>, <varref>, <method>, 
+<accessor>, <type>, <methodname>, <varlist>, <vardef>, <type>, <varname>, <letter>, <char>, <letter>, <char>, <digit>, <statement>,
+ <whilestatemt>, <cond>, <returnstatement>, <varname>
+CXCBIY,CJ;PIM(SZY0)BW(0=0)TBERY;EE$
+ */
+
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -26,6 +77,7 @@ public class Recognizer
 		className();
 		if(getToken() == 'X')
 		{
+			match('X');
 			className();
 		}
 		match('B');
@@ -131,11 +183,11 @@ public class Recognizer
 		type();
 		methodName();
 		match('(');
-		if(getToken() == 'I' || getToken() == 'S')
+		if(getToken() == 'I' || getToken() == 'S' || getToken() == 'C' || getToken() == 'D')
 			varList();
 		match(')');
 		match('B');
-		while(getToken() == 'F' || getToken() == 'Y' || getToken() == 'Z' || getToken() == 'W' || getToken() == 'J' || getToken() == 'K');
+		while(getToken() == 'F' || getToken() == 'Y' || getToken() == 'Z' || getToken() == 'W' || getToken() == 'J' || getToken() == 'K')
 			statemt();
 		returnStatemt();
 		match('E');
@@ -161,7 +213,7 @@ public class Recognizer
 	{
 		if(getToken() == 'F')
 			ifStatemt();
-		else if(getToken() == 'Y' || getToken() == 'Z')
+		else if(getToken() == 'Y' || getToken() == 'Z' || getToken() == 'J' || getToken() == 'K')
 		{
 			assignStatemt();
 			match(';');
@@ -310,8 +362,11 @@ public class Recognizer
 	}
 	
 	private void match(char T)
-	{ if (T == getToken())
-		  nextToken(); 
+	{
+		if (T == getToken())
+		{
+			nextToken();
+		}
 	  	else 
 	  		error(); 
 	}
